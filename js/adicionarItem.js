@@ -11,10 +11,23 @@ export function adicionarItem(ev)
 {
     ev.preventDefault();
  
-    const listaItens = criarItem(item.value);
+    
+    if(item.value === '')
+    {
+        alert('Por favor, insira um item válido!');
+        return;
+    }
+    else
+    {
+        const listaItens = criarItem(item.value);
+        item.value = '';
 
-    listona.appendChild(listaItens);
+        listona.appendChild(listaItens);
 
-    listaVazia(listona);
+        listaVazia(listona);
+    
+    }
+    
+
 }
 

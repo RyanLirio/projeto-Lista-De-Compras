@@ -1,6 +1,8 @@
 import { dataEhora } from "./dataEhora.js";
 import { listaCompradosVazia } from "./listaCompradosVazia.js";
 import { listaVazia } from "./listaVazia.js";
+import { excluirItem } from "./excluirItem.js";
+import { editarItem } from "./editarItem.js";
 
 let contador = 0;
 
@@ -9,6 +11,11 @@ const listona = document.getElementById('listona');
 export function criarItem(item)
 {
     let novoItem = document.createElement('p');
+    let contadorHora = 0;
+    let horaEdata = dataEhora();
+    contadorHora++;
+    console.log('hr'+contadorHora);
+    
 
     console.log(item.value)
 
@@ -69,27 +76,41 @@ export function criarItem(item)
     countainerAcoes.classList.add('countainer-acoes');
 
     const countainerBotoes = document.createElement('button');
-    countainerBotoes.classList.add('botao-acao')
+    countainerBotoes.classList.add('botao-acao');
+    countainerBotoes.id = 'editar'+ contadorHora;
     const countainerEdit = document.createElement('img');
     countainerEdit.src = 'img/edit.svg';
     countainerEdit.alt = 'Editar item';
-    countainerBotoes.addEventListener('click', function()
+    countainerBotoes.addEventListener('click', function(ev)
     {    
-        const editValor = prompt('Edite o item desejado da lista');
-        novoItem.innerText = editValor;
+        countainerBotoes.addEventListener('click', function(ev) {    
+            // Pega o botão clicado (ev.currentTarget)
+            const botaoEditar = ev.currentTarget;
+        
+            // Sobe para o elemento pai e encontra o elemento <p> que contém o texto do item
+            const itemSelecionado = botaoEditar.closest('li').querySelector('#novo-item');
+        
+            // Chama a função de edição passando o texto correto
+            editarItem(itemSelecionado);
+        
+            // Atualiza a data/hora para este item editado
+            const horaEdataEditada = botaoEditar.closest('li').querySelector('.item-lista-texto');
+            if (horaEdataEditada) {
+                horaEdataEditada.innerText = `${new Date().toLocaleDateString("pt-br", {weekday: "long"})}; (${new Date().toLocaleDateString()}) às ${new Date().toLocaleTimeString("pt-br", {hour: "numeric", minute: "numeric"})}`;
+            }
+        
+            console.log("Botão editar clicado para o item com ID:", botaoEditar.id);
+        });
     });
+        
 
     const countainerBotoes2 = document.createElement('button');
     countainerBotoes2.classList.add('botao-acao');
     const countainerDelete = document.createElement('img');
     countainerDelete.src = 'img/delete.svg';
     countainerDelete.alt = 'Excluir item';
-    countainerBotoes2.addEventListener('click', function()
-    {
-        listaItens.remove();
-        
-        listaVazia(listona);        
-        listaCompradosVazia(listonaComprados);
+    countainerBotoes2.addEventListener('click', function(){
+        excluirItem(listaItens, listona, listonaComprados);
     });
 
     novoItem = document.createElement('p');
@@ -108,8 +129,6 @@ export function criarItem(item)
     
     countainerGeral.appendChild(countainerCompra);
     countainerGeral.appendChild(countainerAcoes);
-
-    const horaEdata = dataEhora();
     
     listaItens.appendChild(countainerGeral);
     listaItens.appendChild(horaEdata);
